@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PicShare Gallery</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>PicShare Gallery</h1>
+    <a href="/upload">Upload New Photo</a>
+    <div class="gallery">
+        <% if (photos.length > 0) { %>
+            <% photos.forEach(photo => { %>
+                <div class="photo">
+                    <img src="/images/<%= photo.photo %>" alt="<%= photo.title %>">
+                    <h2><%= photo.title %></h2>
+                    <p><%= photo.description %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No photos available.</p>
+        <% } %>
+    </div>
+</body>
+</html>

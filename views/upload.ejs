@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Photo</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Upload Photo</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="<%= oldTitle %>">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"><%= oldDescription %></textarea>
+        <label for="photo">Photo:</label>
+        <input type="file" id="photo" name="photo">
+        <button type="submit">Upload</button>
+    </form>
+    <% if (errors) { %>
+        <ul>
+            <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+</body>
+</html>
