@@ -1,36 +1,78 @@
+
+
+
+
+/* styles.css */
+
 body {
     font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
 }
 
 h1 {
     text-align: center;
+    color: #343a40;
+    font-weight: bold;
+    font-size: 2.5rem; /* Larger font size for prominence */
+    text-transform: uppercase; /* Capitalize all letters */
+    letter-spacing: 2px; /* Add spacing between letters */
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 10px; /* Space for underline */
 }
 
-.gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.photo {
-    border: 1px solid #ddd;
-    margin: 10px;
-    padding: 10px;
-    text-align: center;
-    width: 300px;
-}
-
-.photo img {
-    max-width: 100%;
-    height: auto;
-}
-
-form {
-    max-width: 600px;
-    margin: auto;
-}
-
-label {
+h1::after {
+    content: '';
     display: block;
-    margin-top: 10px;
+    height: 4px;
+    width: 80px;
+    background: #007bff; /* Unique color for the underline */
+    margin: 0 auto;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-title {
+    
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #007bff; /* Unique color for the title */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    display: block;
+    height: 3px;
+    width: 50px;
+    background: #007bff;
+    margin-top: 5px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.card-text {
+    color: #6c757d;
 }
