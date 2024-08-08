@@ -1,14 +1,15 @@
 const express = require('express');
+const Photo = require('../models/photo');
+
 const router = express.Router();
-const Photo = require('../models/Photo');
 
-
+// Fetch and display all photos
 router.get('/', async (req, res) => {
     try {
-        const photos = await Photo.find();
+        const photos = await Photo.find().sort({ _id: -1 });
         res.render('index', { photos });
     } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch photos', err);
         res.status(500).send('Server Error');
     }
 });

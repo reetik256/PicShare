@@ -1,51 +1,66 @@
 const express = require('express');
-const router = express.Router();
+const { body, validationResult } = require('express-validator');
 const multer = require('multer');
 const path = require('path');
-const { check, validationResult } = require('express-validator');
-const Photo = require('../models/Photo');
+const sharp = require('sharp');
+const Photo = require('../models/photo');
 
+const router = express.Router();
 
-const storage = multer.diskStorage({
-    destination: './public/images/',
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage: storage });
+const storage = multer.memoryStorage(); // Store the image in memory for processing
+const upload = multer({ storage });
 
-
+// Render the upload form
 router.get('/', (req, res) => {
-    res.render('upload', { errors: null, oldTitle: '', oldDescription: '' });
+    res.render('upload', {
+        title: '',
+        description: '',
+        errors: []
+    });
 });
 
-
-router.post('/', [
-    check('title').not().isEmpty().withMessage('Title is required'),
-    check('description').not().isEmpty().withMessage('Description is required'),
-    check('photo').custom((value, { req }) => {
-        if (!req.file) {
-            throw new Error('Photo is required');
+router.post(
+    '/',
+    upload.single('photo'),
+    [
+        body('title').notEmpty().withMessage('Title is required'),
+        body('description').notEmpty().withMessage('Description is required'),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render('upload', {
+                errors: errors.array(),
+                title: req.body.title || '',
+                description: req.body.description || '',
+            });
         }
-        return true;
-    })
-], upload.single('photo'), async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.render('upload', { errors: errors.array(), oldTitle: req.body.title, oldDescription: req.body.description });
-    }
 
-    const { title, description } = req.body;
-    const photo = req.file.filename;
+        // Resize the image using sharp
+        const filename = Date.now() + path.extname(req.file.originalname);
+        const filepath = path.join(__dirname, '../public/images/', filename);
 
-    try {
-        const newPhoto = new Photo({ title, description, photo });
-        await newPhoto.save();
-        res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        try {
+            await sharp(req.file.buffer)
+                .resize(350, 350, {
+                    fit: sharp.fit.inside,
+                    withoutEnlargement: true
+                })
+                .toFile(filepath);
+
+            const newPhoto = new Photo({
+                title: req.body.title,
+                description: req.body.description,
+                imageUrl: `/images/${filename}`,
+            });
+
+            await newPhoto.save();
+            res.redirect('/');
+        } catch (err) {
+            console.error('Failed to process image', err);
+            res.status(500).send('Server Error');
+        }
     }
-});
+);
 
 module.exports = router;
